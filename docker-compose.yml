@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: playwright-practice:latest
+    container_name: playwright_runner
+    environment:
+      # Inject environment variables with fallbacks from the host .env file
+      - BROWSER=${BROWSER:-chrome}
+      - TEST_TIMEOUT=${TEST_TIMEOUT:-20}
+      - BROWSER_LAUNCH_TIMEOUT=${BROWSER_LAUNCH_TIMEOUT:-0}
+      - ACTION_TIMEOUT=${ACTION_TIMEOUT:-1}
+      - NAVIGATION_TIMEOUT=${NAVIGATION_TIMEOUT:-2}
+      - RETRIES=${RETRIES:-0}
+      - PARALLEL_THREAD=${PARALLEL_THREAD:-3}
+      - BASE_URL=${BASE_URL:-http://advantageonlineshopping.com}
+      - SOAP_API_BASE_URL=${SOAP_API_BASE_URL:-http://www.advantageonlineshopping.com:80}
+      - REST_API_BASE_URL=${REST_API_BASE_URL:-https://fakestoreapi.com}
+      - DB_CONFIG=${DB_CONFIG:-Server=host.docker.internal,1433;Database=AutomationDB;User Id=SA;Password=Auto2021}
+      - TEST_NAME=${TEST_NAME:-debug}
+      - HEADLESS=${HEADLESS:-true}
+      - CI=${CI:-true}
+    volumes:
+      # Mount results and allure reports to host to view test outputs locally
+      - ./test-results:/app/test-results
+      - ./allure-results:/app/allure-results
+    extra_hosts:
+      # Allows the container to connect to databases or services running on your Windows host
+      - "host.docker.internal:host-gateway"
